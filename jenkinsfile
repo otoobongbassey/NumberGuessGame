@@ -33,11 +33,11 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh ''''
+                sh '''
                 WAR_FILE=$(ls target/*.war | head -n 1)
                 sudo cp $WAR_FILE /opt/tomcat/webapps/NumberGuessGame.war
                 sudo systemctl restart tomcat
-                ''''
+                '''
             }
         }
     }
