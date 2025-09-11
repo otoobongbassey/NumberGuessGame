@@ -9,7 +9,7 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'MySonarQube'   // Configure in Jenkins → Manage Jenkins → Configure System
         NEXUS_REPO = 'releases'         // Nexus repository ID from pom.xml <distributionManagement>
-        NEXUS_URL = 'http://<NEXUS_SERVER>:8081/repository/releases/'
+        NEXUS_URL = 'http://54.211.175.36:8081/repository/releases/'
         DEPLOY_PATH = '/opt/tomcat/webapps'
     }
 
@@ -20,7 +20,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/otoobongbassey/NumberGuessGame.git'
+                git branch: 'Main-Tomcat-Deployed', url: 'https://github.com/otoobongbassey/NumberGuessGame.git'
             }
         }
 
@@ -64,14 +64,14 @@ pipeline {
     post {
         success {
             emailext(
-                to: 'team@example.com',
+                to: 'otoobongbassey5@gmail.com',
                 subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
                 body: "✅ Build succeeded!\n\nCheck console: ${env.BUILD_URL}"
             )
         }
         failure {
             emailext(
-                to: 'team@example.com',
+                to: 'otoobongbassey@gmail.com',
                 subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
                 body: "❌ Build failed!\n\nCheck logs: ${env.BUILD_URL}"
             )
