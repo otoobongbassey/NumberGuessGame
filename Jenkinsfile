@@ -20,7 +20,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'Main-Tomcat-Deployed', url: 'https://github.com/otoobongbassey/NumberGuessGame.git'
+                git branch: 'main', url: 'https://github.com/otoobongbassey/NumberGuessGame.git'
             }
         }
 
