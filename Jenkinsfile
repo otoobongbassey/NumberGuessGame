@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk8'             // Jenkins → Global Tool Configuration (Java 8 / 17 for build)
+        jdk 'jdk8'             // Jenkins → Global Tool Configuration (Java 8 / 11 for build)
         maven 'maven-3.9'       // Jenkins → Global Tool Configuration
     }
 
