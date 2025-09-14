@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk17'             // Jenkins → Global Tool Configuration (Java 11 / 17 for build)
+        jdk 'jdk8'             // Jenkins → Global Tool Configuration (Java 8 / 17 for build)
         maven 'maven-3.9'       // Jenkins → Global Tool Configuration
     }
 
@@ -11,8 +11,9 @@ pipeline {
         NEXUS_REPO = 'releases'         // Nexus repository ID from pom.xml <distributionManagement>
         NEXUS_URL = 'http://54.165.30.243:8081/repository/releases/'
         DEPLOY_PATH = '/opt/tomcat/webapps'
-        JAVA_11_HOME = '/usr/lib/jvm/java-11-amazon-corretto.x86_64'
         JAVA_8_HOME  = '/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64'
+        JAVA_11_HOME = '/usr/lib/jvm/java-11-amazon-corretto.x86_64'
+        
     }
 
     triggers {
