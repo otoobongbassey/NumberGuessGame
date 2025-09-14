@@ -2,19 +2,21 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk17'             // Jenkins → Global Tool Configuration
+        jdk 'jdk17'             // Jenkins → Global Tool Configuration (Java 11 / 17 for build)
         maven 'maven-3.9'       // Jenkins → Global Tool Configuration
     }
 
     environment {
-        SONARQUBE_ENV = 'MySonarQube'   // Configure in Jenkins → Manage Jenkins → Configure System
+        SONARQUBE_ENV = 'MySonarQube'   // Name configured in Jenkins → Configure System
         NEXUS_REPO = 'releases'         // Nexus repository ID from pom.xml <distributionManagement>
-        NEXUS_URL = 'http://54.211.175.36:8081/repository/releases/'
+        NEXUS_URL = 'http://54.165.30.243:8081/repository/releases/'
         DEPLOY_PATH = '/opt/tomcat/webapps'
+        JAVA_11_HOME = '/usr/lib/jvm/java-11-amazon-corretto.x86_64'
+        JAVA_8_HOME  = '/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64'
     }
 
     triggers {
-        githubPush()   // Webhook trigger from GitHub → Jenkins
+        githubPush()
     }
 
     stages {
@@ -26,21 +28,37 @@ pipeline {
 
         stage('Static Code Analysis - SonarQube') {
             steps {
-                withSonarQubeEnv("${SONARQUBE_ENV}") {
-                    sh 'mvn clean verify sonar:sonar'
+                // Use Java 11 for SonarQube analysis
+                withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
+                    withSonarQubeEnv("${SONARQUBE_ENV}") {
+                        sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=NumberGuessGame'
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
 
         stage('Build & Test') {
             steps {
-                sh 'mvn clean package'
+                withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
+                    sh 'mvn clean package'
+                }
             }
         }
 
         stage('Upload Artifact to Nexus') {
             steps {
-                sh 'mvn deploy'
+                // If Nexus specifically requires Java 8, switch to it temporarily
+                withEnv(["JAVA_HOME=${env.JAVA_8_HOME}", "PATH=${env.JAVA_8_HOME}/bin:${env.PATH}"]) {
+                    sh 'mvn deploy'
+                }
             }
         }
 
