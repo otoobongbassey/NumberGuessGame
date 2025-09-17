@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk8'             // Jenkins → Global Tool Configuration (Java 8 / 11 for build)
+        jdk 'jdk11'             // Jenkins → Global Tool Configuration (Java 8 / 11 for build)
         maven 'maven-3.9'       // Jenkins → Global Tool Configuration
     }
 
@@ -29,8 +29,8 @@ pipeline {
 
         stage('Static Code Analysis - SonarQube') {
             steps {
-                // Use Java 8 for SonarQube analysis
-                withEnv(["JAVA_HOME=${env.JAVA_8_HOME}", "PATH=${env.JAVA_8_HOME}/bin:${env.PATH}"]) {
+                // Use Java 11 for SonarQube analysis
+                withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
                         sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=NumberGuessGame'
                     }
@@ -48,7 +48,7 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                withEnv(["JAVA_HOME=${env.JAVA_8_HOME}", "PATH=${env.JAVA_8_HOME}/bin:${env.PATH}"]) {
+                withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
                     sh 'mvn clean package'
                 }
             }
@@ -57,7 +57,7 @@ pipeline {
         stage('Upload Artifact to Nexus') {
             steps {
                 // If Nexus specifically requires Java 8, switch to it temporarily
-                withEnv(["JAVA_HOME=${env.JAVA_8_HOME}", "PATH=${env.JAVA_8_HOME}/bin:${env.PATH}"]) {
+                withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
                     sh 'mvn deploy'
                 }
             }
