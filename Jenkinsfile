@@ -9,7 +9,7 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'MySonarQube'   // Name configured in Jenkins → Configure System
         NEXUS_REPO = 'releases'         // Nexus repository ID from pom.xml <distributionManagement>
-        NEXUS_URL = 'http://54.165.30.243:8081/repository/releases/'
+        NEXUS_URL = 'http://34.235.118.123:8081/repository/releases/'
         DEPLOY_PATH = '/opt/tomcat/webapps'
         JAVA_8_HOME  = '/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64'
         JAVA_11_HOME = '/usr/lib/jvm/java-11-amazon-corretto.x86_64'
