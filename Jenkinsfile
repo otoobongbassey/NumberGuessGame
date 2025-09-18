@@ -50,13 +50,14 @@ pipeline {
             }
         }
 
-        stage('Build & Test') {
-            steps {
-                withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
-                    sh 'mvn clean package'
-                }
-            }
+       stage('Build & Test') {
+    steps {
+        sh 'sudo systemctl stop tomcat || true'   // ensure Tomcat is stopped
+        withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
+            sh 'mvn clean package'
         }
+    }
+}
 
         stage('Upload Artifact to Nexus') {
     steps {
