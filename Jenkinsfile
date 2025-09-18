@@ -59,13 +59,26 @@ pipeline {
         }
 
         stage('Upload Artifact to Nexus') {
-            steps {
-                // If Nexus specifically requires Java 8, switch to it temporarily
-                withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
-                    sh 'mvn deploy'
-                }
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'nexus-credentials', 
+            usernameVariable: 'NEXUS_USER', 
+            passwordVariable: 'NEXUS_PASS'
+        )]) {
+            withEnv([
+                "JAVA_HOME=${env.JAVA_11_HOME}", 
+                "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"
+            ]) {
+                sh """
+                  mvn deploy \
+                    -Dnexus.username=$NEXUS_USER \
+                    -Dnexus.password=$NEXUS_PASS
+                """
             }
         }
+    }
+}
+
 
         stage('Deploy to Tomcat') {
             steps {
