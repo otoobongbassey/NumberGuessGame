@@ -62,26 +62,38 @@ pipeline {
     }
 }
 
-        stage('Upload Artifact to Nexus') {
+       stage('Upload Artifact to Nexus') {
     steps {
         withCredentials([usernamePassword(
-            credentialsId: 'nexus-credentials', 
-            usernameVariable: 'NEXUS_USER', 
+            credentialsId: 'nexus-credentials',
+            usernameVariable: 'NEXUS_USER',
             passwordVariable: 'NEXUS_PASS'
         )]) {
             withEnv([
-                "JAVA_HOME=${env.JAVA_11_HOME}", 
+                "JAVA_HOME=${env.JAVA_11_HOME}",
                 "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"
             ]) {
                 sh """
-                  mvn deploy \
-                    -Dnexus.username=$NEXUS_USER ,
-                    -Dnexus.password=$NEXUS_PASS
+                  mkdir -p \$WORKSPACE/.m2
+                  cat > \$WORKSPACE/.m2/settings.xml <<EOF
+                  <settings>
+                    <servers>
+                      <server>
+                        <id>${env.NEXUS_REPO}</id>
+                        <username>\$NEXUS_USER</username>
+                        <password>\$NEXUS_PASS</password>
+                      </server>
+                    </servers>
+                  </settings>
+                  EOF
+
+                  mvn deploy --settings \$WORKSPACE/.m2/settings.xml
                 """
             }
         }
     }
 }
+
 
 
         stage('Deploy to Tomcat') {
