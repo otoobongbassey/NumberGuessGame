@@ -66,8 +66,8 @@ pipeline {
     steps {
         withCredentials([usernamePassword(
             credentialsId: 'nexus-credentials', 
-            usernameVariable: 'admin', 
-            passwordVariable: 'admin123'
+            usernameVariable: 'NEXUS_USER', 
+            passwordVariable: 'NEXUS_PASS'
         )]) {
             withEnv([
                 "JAVA_HOME=${env.JAVA_11_HOME}", 
@@ -75,8 +75,8 @@ pipeline {
             ]) {
                 sh """
                   mvn deploy \
-                    -Dnexus.username=$admin \
-                    -Dnexus.password=$admin123
+                    -Dnexus.username=$NEXUS_USER \
+                    -Dnexus.password=$NEXUS_PASS
                 """
             }
         }
