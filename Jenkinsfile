@@ -28,15 +28,15 @@ pipeline {
             }
         }
 
-       stage('Static Code Analysis - SonarQube') {
-    steps {
-        withSonarQubeEnv('MySonarQube') {
-            withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
-                sh "mvn verify sonar:sonar -Dsonar.projectKey=NumberGuessGame"
+        stage('Static Code Analysis - SonarQube') {
+            steps {
+                withSonarQubeEnv('MySonarQube') {
+                    withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
+                        sh "mvn verify sonar:sonar -Dsonar.projectKey=NumberGuessGame"
+                    }
+                }
             }
         }
-    }
-}
 
         stage('Quality Gate') {
             steps {
@@ -136,22 +136,22 @@ pipeline {
     }
 
     post {
-    success {
-        emailext(
-            to: 'basseyotoobong5@gmail.com',
-            subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-            body: """<p>Good news!</p>
-                     <p>The Jenkins job <b>${env.JOB_NAME} [${env.BUILD_NUMBER}]</b> completed successfully.</p>
-                     <p>Check the <a href="${env.BUILD_URL}">build logs</a> for details.</p>"""
-        )
+        success {
+            emailext(
+                to: 'basseyotoobong5@gmail.com',
+                subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>✅ Good news!</p>
+                         <p>The Jenkins job <b>${env.JOB_NAME} [${env.BUILD_NUMBER}]</b> completed successfully.</p>
+                         <p>Check the <a href="${env.BUILD_URL}">build logs</a> for details.</p>"""
+            )
+        }
+        failure {
+            emailext(
+                to: 'basseyotoobong5@gmail.com',
+                subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>❌ Unfortunately, the Jenkins job <b>${env.JOB_NAME} [${env.BUILD_NUMBER}]</b> has failed.</p>
+                         <p>Check the <a href="${env.BUILD_URL}">build logs</a> for details.</p>"""
+            )
+        }
     }
-    failure {
-        emailext(
-            to: 'basseyotoobong5@gmail.com',
-            subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-            body: """<p>Unfortunately, the Jenkins job <b>${env.JOB_NAME} [${env.BUILD_NUMBER}]</b> has failed.</p>
-                     <p>Check the <a href="${env.BUILD_URL}">build logs</a> for details.</p>"""
-        )
-    }
-}
 }
