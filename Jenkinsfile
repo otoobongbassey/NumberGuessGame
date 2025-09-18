@@ -28,21 +28,15 @@ pipeline {
             }
         }
 
-        stage('Static Code Analysis - SonarQube') {
-            steps {
-                withSonarQubeEnv('MySonarQube') {
-                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                        withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
-                            sh """
-                              mvn verify sonar:sonar \
-                                -Dsonar.projectKey=NumberGuessGame \
-                                -Dsonar.login=$SONAR_TOKEN
-                            """
-                        }
-                    }
-                }
+       stage('Static Code Analysis - SonarQube') {
+    steps {
+        withSonarQubeEnv('MySonarQube') {
+            withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
+                sh "mvn verify sonar:sonar -Dsonar.projectKey=NumberGuessGame"
             }
         }
+    }
+}
 
         stage('Quality Gate') {
             steps {
