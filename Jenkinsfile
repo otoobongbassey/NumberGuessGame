@@ -96,22 +96,24 @@ pipeline {
 
 
 
-        stage('Deploy to Tomcat') {
-            steps {
-                sh '''
-                WAR_FILE=$(ls target/*.war | head -n 1)
-                if [ -f "$WAR_FILE" ]; then
-                  echo "Deploying $WAR_FILE to Tomcat..."
-                  sudo cp $WAR_FILE ${DEPLOY_PATH}/NumberGuessGame.war
-                  sudo systemctl restart tomcat
-                else
-                  echo "WAR file not found! Build might have failed."
-                  exit 1
-                fi
-                '''
-            }
-        }
+      stage('Deploy to Tomcat') {
+    steps {
+        sh '''
+        WAR_FILE=$(ls target/*.war | head -n 1)
+        if [ -f "$WAR_FILE" ]; then
+          echo "Cleaning old deployment..."
+          sudo rm -rf ${DEPLOY_PATH}/NumberGuessGame ${DEPLOY_PATH}/NumberGuessGame.war
+          echo "Deploying $WAR_FILE to Tomcat..."
+          sudo cp $WAR_FILE ${DEPLOY_PATH}/NumberGuessGame.war
+          sudo systemctl restart tomcat
+        else
+          echo "WAR file not found! Build might have failed."
+          exit 1
+        fi
+        '''
     }
+}
+
 
     post {
         success {
