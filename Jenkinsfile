@@ -75,7 +75,7 @@ pipeline {
             ]) {
                 sh """
                   mvn deploy \
-                    -Dnexus.username=$NEXUS_USER \
+                    -Dnexus.username=$NEXUS_USER ,
                     -Dnexus.password=$NEXUS_PASS
                 """
             }
