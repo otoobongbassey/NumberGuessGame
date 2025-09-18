@@ -28,15 +28,19 @@ pipeline {
         }
 
         stage('Static Code Analysis - SonarQube') {
-            steps {
-                // Use Java 11 for SonarQube analysis
-                withEnv(["JAVA_HOME=${env.JAVA_11_HOME}", "PATH=${env.JAVA_11_HOME}/bin:${env.PATH}"]) {
-                    withSonarQubeEnv("${SONARQUBE_ENV}") {
-                        sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=NumberGuessGame'
-                    }
-                }
+    steps {
+        withSonarQubeEnv('MySonarQube') {
+            withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                sh """
+                  mvn clean verify sonar:sonar \
+                    -Dsonar.projectKey=NumberGuessGame \
+                    -Dsonar.login=$SONAR_TOKEN
+                """
             }
         }
+    }
+}
+
 
         stage('Quality Gate') {
             steps {
